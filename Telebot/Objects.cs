@@ -1,7 +1,7 @@
 ﻿namespace Telebot.Objects
 {
     using Newtonsoft.Json;
-
+    using System.Collections.Generic;
     [JsonObject("User")]
     public class User
     {
@@ -70,13 +70,13 @@
         [JsonProperty("text")]
         public string text;
         [JsonProperty("entities")]
-        public MessageEntity[] entities;
+        public List<MessageEntity> entities;
         [JsonProperty("audio")]
         public Audio audio;
         [JsonProperty("document")]
         public Document document;
         [JsonProperty("photo")]
-        public PhotoSize[] photo;
+        public List<PhotoSize> photo;
         [JsonProperty("sticker")]
         public Sticker sticker;
         [JsonProperty("video")]
@@ -98,7 +98,7 @@
         [JsonProperty("new_chat_title")]
         public string new_chat_title;
         [JsonProperty("new_chat_photo")]
-        public PhotoSize[] new_chat_photo;
+        public List<PhotoSize> new_chat_photo;
         [JsonProperty("delete_chat_photo")]
         public bool delete_chat_photo;
         [JsonProperty("group_chat_created")]

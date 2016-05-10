@@ -26,11 +26,10 @@ namespace Telebot
         static void Main(string[] args)
         {
             var bot = new Bot("209137847:AAH7uktgrCt1_TGDFdX6-xM80KF9GgNfADE");
-            Console.Out.WriteLine("");
-            Console.Out.WriteLine(bot.getMe());
-            Console.Out.WriteLine("");
-            Console.Out.WriteLine(bot.sendMessage("hello iz charpa"));
+            var user = bot.getMe();
+            // var msg = bot.sendMessage(user, "Desiiiii");
             bot.loop().Wait();
+           // bot.loop().Wait();
         }
 
         public string Key;
@@ -44,7 +43,7 @@ namespace Telebot
         {
             while (true)
             {
-                WebRequest request = WebRequest.Create("https://api.telegram.org/bot" + Key + "/getUpdates");
+                WebRequest request = WebRequest.Create("https://api.telegram.org/bot" + Key + "/getUpdates?offset=-1");
                 var response = request.GetResponse();
                 System.Diagnostics.Debug.WriteLine(((HttpWebResponse)response).StatusDescription);
                 // Get the stream containing content returned by the server.
@@ -55,9 +54,18 @@ namespace Telebot
                 // Read the content.
                 string responseFromServer = reader.ReadToEnd();
 
+                var test = "{\"update_id\":113364644, \"message\":{ \"message_id\":116,\"from\":{ \"id\":180771137,\"first_name\":\"Nedeljko\",\"last_name\":\"Pejasinovic\"},\"chat\":{ \"id\":180771137,\"first_name\":\"Nedeljko\",\"last_name\":\"Pejasinovic\",\"type\":\"private\"},\"date\":1462902469,\"text\":\"hj\"}}";
                 JsonTextReader jreader = new JsonTextReader(new StringReader(responseFromServer));
-                var ob = JsonSerializer.Create().Deserialize<Update[]>(jreader)[0];
-
+                try {
+                    var ob = JsonSerializer.Create().Deserialize<List<Update>>(jreader);
+                    int a = 3;
+                }
+                catch(JsonSerializationException je)
+                {
+                    System.Diagnostics.Debug.WriteLine(je.ToString());
+                }
+                    
+                    //  await Task.Delay(1000);
                 // Display the content.
                 System.Diagnostics.Debug.WriteLine(responseFromServer);
                 System.Diagnostics.Debug.WriteLine("");
@@ -70,7 +78,7 @@ namespace Telebot
             }
         }
 
-        public string getMe()
+        public User getMe()
         {
             WebRequest request = WebRequest.Create("https://api.telegram.org/bot" + Key + "/getMe");
             var response = request.GetResponse();
@@ -91,12 +99,12 @@ namespace Telebot
             reader.Close();
             response.Close();
 
-            return responseFromServer;
+            return ob.result;
         }
 
-        public string sendMessage(string text)
+        public Message sendMessage(User user, string text)
         {
-            WebRequest request = WebRequest.Create("https://api.telegram.org/bot" + Key + "/sendMessage?chat_id=180771137&text=" + text);
+            WebRequest request = WebRequest.Create("https://api.telegram.org/bot" + Key + "/sendMessage?chat_id=" + user.id + "&text=" + text);
 
             var response = request.GetResponse();
             Console.WriteLine(((HttpWebResponse)response).StatusDescription);
@@ -111,8 +119,8 @@ namespace Telebot
                     'PSU': '500W'
             }";
 
-            JsonTextReader jreader = new JsonTextReader(new StringReader(json));
-            var ob = JsonSerializer.Create().Deserialize<komp>(jreader);
+            JsonTextReader jreader = new JsonTextReader(new StringReader(responseFromServer));
+            var ob = JsonSerializer.Create().Deserialize<Message>(jreader);
 
             while (jreader.Read())
             {
@@ -131,7 +139,7 @@ namespace Telebot
             reader.Close();
             response.Close();
 
-            return responseFromServer;
+            return ob;
         }
 
     }
